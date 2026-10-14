@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#07131d" />
+    <title>BrewGuard — 3D Physical Security Miniature</title>
+  </head>
+  <body>
+    <main id="app">
+      <canvas id="scene-canvas" aria-label="Interactive BrewGuard coffee shop 3D scene"></canvas>
+
+      <section id="welcome-screen" class="screen-layer">
+        <div class="welcome-card panel-glass">
+          <div class="eyebrow"><span class="status-dot"></span> Physical security miniature · BG-001</div>
+          <h1>BrewGuard <span>Coffee Shop</span></h1>
+          <p class="welcome-subtitle">Interactive 3D Physical Security Miniature</p>
+          <p class="welcome-copy">
+            Explore the coffee shop and inspect the placement of physical security controls including CCTV,
+            access control, alarms, fire safety equipment, sensors, and emergency exits.
+          </p>
+          <div class="welcome-actions">
+            <button id="enter-button" class="button button-primary">Enter Coffee Shop <span>↗</span></button>
+            <button id="overview-button" class="button button-secondary">View Miniature Overview</button>
+          </div>
+          <div class="welcome-meta">
+            <span>10 m × 9.2 m footprint</span>
+            <span>Desktop browser experience</span>
+            <span>Procedural geometry</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="hud" class="hud is-hidden" aria-live="polite">
+        <header class="topbar">
+          <div class="brand-lockup">
+            <div class="brand-mark">B<span>G</span></div>
+            <div>
+              <div class="brand-name">BrewGuard</div>
+              <div class="brand-caption">3D physical security miniature</div>
+            </div>
+          </div>
+          <div class="topbar-right">
+            <div class="mode-chip"><span class="mode-chip-dot"></span><span id="mode-label">Walkthrough</span></div>
+            <button id="help-button" class="icon-button" aria-label="Show controls" title="Show controls">?</button>
+          </div>
+        </header>
+
+        <aside class="control-dock panel-glass">
+          <div class="dock-heading">Presentation controls</div>
+          <label class="toggle-row">
+            <span><span class="toggle-icon cyan">◈</span> Security overlay</span>
+            <input id="overlay-toggle" type="checkbox" />
+            <span class="switch"></span>
+          </label>
+          <label class="toggle-row">
+            <span><span class="toggle-icon amber">☼</span> Night lighting</span>
+            <input id="night-toggle" type="checkbox" />
+            <span class="switch"></span>
+          </label>
+          <label class="toggle-row">
+            <span><span class="toggle-icon violet">▣</span> Authorized staff demo</span>
+            <input id="staff-toggle" type="checkbox" />
+            <span class="switch"></span>
+          </label>
+          <div class="area-shortcuts">
+            <label class="dock-heading" for="area-select">Explore an area</label>
+            <div class="area-select-row">
+              <select id="area-select" aria-label="Choose an area to explore">
+                <option value="entrance">Main entrance</option>
+                <option value="prep">Coffee bar / preparation</option>
+                <option value="cashier">Cashier / POS</option>
+                <option value="dining">Customer dining</option>
+                <option value="storage">Storage room</option>
+                <option value="staff">Staff door / RFID</option>
+                <option value="restroom">Restroom</option>
+                <option value="exit">Emergency exit route</option>
+              </select>
+              <button id="go-area-button" class="area-go-button" title="Move to selected area">↗</button>
+            </div>
+          </div>
+          <div class="dock-divider"></div>
+          <button id="auto-explore-button" class="dock-button auto-explore-button" type="button" aria-pressed="false"><span>▶</span> Start Auto Explore</button>
+          <div id="auto-explore-status" class="auto-explore-status" role="status" aria-live="polite" hidden></div>
+          <button id="floorplan-button" class="dock-button"><span>▦</span> Floor plan / blueprint</button>
+          <button id="reset-button" class="dock-button"><span>⟳</span> Reset position</button>
+          <button id="mode-button" class="dock-button"><span>⌘</span> Switch to overview</button>
+          <button id="roof-button" class="dock-button is-hidden"><span>▱</span> Show roof shell</button>
+        </aside>
+
+        <div id="walkthrough-hint" class="walkthrough-hint panel-glass">
+          <span class="hint-key">CLICK TO LOOK AROUND</span>
+          <span>WASD / arrow keys move · Shift sprint · E interact / sit / stand · F security layer · L lighting</span>
+        </div>
+
+        <div id="reticle" class="reticle" aria-hidden="true"><span></span></div>
+        <div id="interaction-prompt" class="interaction-prompt"></div>
+        <div id="toast" class="toast" role="status"></div>
+
+        <div id="tour-caption" class="tour-caption panel-glass is-hidden" role="region" aria-label="Auto Explore subtitles">
+          <div class="tour-caption-header">
+            <span id="tour-caption-area" class="tour-caption-area"></span>
+            <div class="tour-caption-actions">
+              <button id="tour-audio-button" type="button" aria-pressed="true">Audio on</button>
+              <button id="tour-stop-button" type="button">Stop tour</button>
+            </div>
+          </div>
+          <p id="tour-caption-text" aria-live="polite"></p>
+        </div>
+
+        <aside id="info-panel" class="info-panel panel-glass is-hidden">
+          <button id="info-close" class="info-close" aria-label="Close information panel">×</button>
+          <div id="info-kicker" class="info-kicker">SECURITY DEVICE</div>
+          <h2 id="info-title">CCTV</h2>
+          <div id="info-location" class="info-location"></div>
+          <p id="info-purpose"></p>
+        </aside>
+
+        <aside id="mini-legend" class="mini-legend panel-glass is-hidden" aria-label="Security feature legend">
+          <div class="legend-heading">Legend / key</div>
+          <div class="legend-items">
+            <span><i class="legend-mark camera-mark"></i>CCTV camera</span>
+            <span><i class="legend-mark access-mark">⌑</i>RFID / locked door</span>
+            <span><i class="legend-mark alert-mark">●</i>Panic / alarm</span>
+            <span><i class="legend-mark safety-mark">✚</i>Fire safety</span>
+            <span><i class="legend-mark sensor-mark">◉</i>Motion / contact sensor</span>
+            <span><i class="legend-mark light-mark">✦</i>Security lighting</span>
+          </div>
+        </aside>
+        <div id="blueprint-stamp" class="blueprint-stamp is-hidden">
+          <div class="stamp-name">BrewGuard Coffee Shop</div>
+          <div class="stamp-subtitle">Physical Security Blueprint</div>
+          <div class="stamp-meta">3D concept visualization <span>BG-001</span> 10 m × 9.2 m</div>
+        </div>
+
+        <div id="controls-card" class="controls-card panel-glass is-hidden">
+          <button id="controls-close" class="info-close" aria-label="Close controls">×</button>
+          <div class="info-kicker">FIELD GUIDE</div>
+          <h2>Explore the miniature</h2>
+          <div class="key-grid">
+            <span><b>W A S D</b> Move</span>
+            <span><b>Mouse</b> Look</span>
+            <span><b>Shift</b> Sprint</span>
+            <span><b>E / click</b> Interact</span>
+            <span><b>E</b> Sit / stand</span>
+            <span><b>P</b> Floor plan</span>
+            <span><b>Auto Explore</b> Guided tour</span>
+            <span><b>F</b> Security layer</span>
+            <span><b>L</b> Day / night</span>
+            <span><b>O</b> Overview</span>
+            <span><b>R</b> Reset position</span>
+          </div>
+          <p class="controls-note">Auto Explore provides spoken explanations and subtitles while enabling demo staff access. You can mute the audio or stop the tour at any time. In overview mode, drag to orbit, right-drag to pan, and scroll to zoom.</p>
+        </div>
+        <section id="floorplan-panel" class="floorplan-panel is-hidden" role="dialog" aria-modal="true" aria-label="Coffee shop floor plan">
+          <div class="floorplan-card panel-glass">
+            <div class="floorplan-head">
+              <div><div class="info-kicker">BREWGUARD / BG-001</div><h2>Floor plan &amp; blueprint</h2><p>10 m × 9.2 m · top-down view · entrance at bottom</p></div>
+              <button id="floorplan-close" class="info-close" aria-label="Close floor plan">×</button>
+            </div>
+            <svg id="floorplan-svg" viewBox="0 0 1000 940" role="img" aria-label="Top-down layout of coffee bar, cashier, dining, storage, staff room, restroom and exit">
+              <defs>
+                <pattern id="plan-grid" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M 30 0 L 0 0 0 30" fill="none" stroke="#173f54" stroke-width="1"/></pattern>
+                <marker id="route-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#5de1ff"/></marker>
+              </defs>
+              <rect width="1000" height="940" fill="#081e2c"/>
+              <rect width="1000" height="940" fill="url(#plan-grid)"/>
+              <rect x="50" y="36" width="900" height="828" class="plan-outline"/>
+              <rect x="52" y="38" width="223" height="225" class="plan-staff"/>
+              <rect x="277" y="38" width="263" height="225" class="plan-staff"/>
+              <rect x="542" y="38" width="196" height="225" class="plan-room"/>
+              <rect x="740" y="38" width="208" height="225" class="plan-public"/>
+              <path d="M 50 864 V 36 H 820 M 928 36 H 950 V 864 H 592 M 408 864 H 50 M 275 36 V 264 M 540 36 V 264 M 738 36 V 264 M 50 264 H 118 M 208 264 H 338 M 437 264 H 621 M 720 264 H 815 M 914 264 H 950" class="plan-wall"/>
+              <line x1="82" y1="864" x2="352" y2="864" class="plan-glass"/>
+              <line x1="648" y1="864" x2="864" y2="864" class="plan-glass"/>
+              <line x1="408" y1="864" x2="592" y2="864" class="plan-entrance"/>
+              <line x1="820" y1="36" x2="928" y2="36" class="plan-exit-door"/>
+              <path d="M 118 264 H 208 M 118 264 A 90 90 0 0 1 208 174 M 338 264 H 437 M 437 264 A 99 99 0 0 1 338 165 M 621 264 H 720 M 720 264 A 99 99 0 0 1 621 165" class="plan-door"/>
+              <path d="M 820 36 H 928 M 820 36 A 108 108 0 0 0 928 144" class="plan-door plan-door-exit"/>
+              <path d="M 500 864 L 408 864 M 500 864 L 592 864" class="plan-door plan-door-glass"/>
+              <rect x="55" y="349" width="385" height="124" rx="4" class="plan-counter"/>
+              <rect x="418" y="410" width="160" height="130" rx="4" class="plan-counter"/>
+              <rect x="430" y="581" width="140" height="124" rx="3" class="plan-mat"/>
+              <rect x="77" y="75" width="113" height="141" rx="2" class="plan-storage-fixture"/>
+              <line x1="115" y1="75" x2="115" y2="216" class="plan-shelf-line"/>
+              <line x1="153" y1="75" x2="153" y2="216" class="plan-shelf-line"/>
+              <rect x="299" y="105" width="122" height="69" rx="2" class="plan-fixture"/>
+              <rect x="427" y="139" width="34" height="47" rx="2" class="plan-fixture plan-metal-fixture"/>
+              <rect x="673" y="79" width="42" height="76" rx="12" class="plan-fixture plan-restroom-fixture"/>
+              <ellipse cx="694" cy="116" rx="13" ry="20" class="plan-restroom-bowl"/>
+              <rect x="687" y="177" width="36" height="44" rx="6" class="plan-fixture plan-restroom-fixture"/>
+              <rect x="118" y="373" width="61" height="64" rx="3" class="plan-appliance"/>
+              <rect x="460" y="421" width="31" height="18" rx="2" class="plan-appliance"/>
+              <rect x="535" y="417" width="38" height="53" rx="3" class="plan-display"/>
+              <line x1="583" y1="273" x2="583" y2="413" class="plan-gate"/>
+              <g id="floorplan-tables"></g>
+              <path d="M 500 850 L 617 810 L 617 340 L 874 340 L 874 58" class="plan-route" marker-end="url(#route-arrow)"/>
+              <text x="163" y="135" class="plan-label">STORAGE</text>
+              <text x="405" y="135" class="plan-label">STAFF ONLY</text>
+              <text x="640" y="135" class="plan-label">RESTROOM</text>
+              <text x="840" y="135" class="plan-label">EXIT</text>
+              <text x="247" y="505" class="plan-label">PREPARATION BAR</text>
+              <text x="497" y="558" class="plan-label">CASHIER</text>
+              <text x="735" y="300" class="plan-label">DINING</text>
+              <text x="72" y="650" class="plan-note" transform="rotate(-90 72 650)">WAITING CHAIRS</text>
+              <text x="808" y="322" class="plan-route-label">CLEAR EXIT AISLE</text>
+              <text x="500" y="900" class="plan-label">MAIN ENTRANCE</text>
+              <circle id="floorplan-player" cx="500" cy="918" r="13" class="plan-player"/>
+            </svg>
+            <div class="floorplan-key"><span><i class="key-swatch public"></i> Public area</span><span><i class="key-swatch staff"></i> Staff area</span><span><i class="key-swatch furniture"></i> Furniture / fixtures</span><span><i class="key-swatch route"></i> Exit aisle</span><span><i class="key-swatch gate"></i> RFID gate</span><span><i class="key-swatch marker"></i> Your position</span></div>
+          </div>
+        </section>
+      </section>
+
+      <div id="loading-indicator" class="loading-indicator">Preparing the miniature<span>…</span></div>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
