@@ -767,7 +767,7 @@ p {
 }
 
 .floorplan-card {
-  width: min(860px, 100%);
+  width: min(1100px, 100%);
   max-height: calc(100vh - 48px);
   overflow-y: auto;
   padding: 22px;
@@ -794,42 +794,42 @@ p {
 #floorplan-svg {
   display: block;
   width: 100%;
-  border: 1px solid rgba(93, 225, 255, 0.36);
-  border-radius: 5px;
+  border: 1px solid #779fb9;
+  border-radius: 1px;
 }
 
-.plan-outline { fill: rgba(22, 50, 61, 0.66); stroke: rgba(181, 216, 221, 0.28); stroke-width: 2; }
-.plan-staff { fill: rgba(204, 166, 101, 0.2); stroke: #72919c; stroke-width: 2; }
-.plan-room { fill: rgba(100, 174, 192, 0.22); stroke: #72919c; stroke-width: 2; }
-.plan-public { fill: rgba(93, 225, 255, 0.09); stroke: #72919c; stroke-width: 2; }
-.plan-wall { fill: none; stroke: #d1d9d0; stroke-width: 9; }
-.plan-counter { fill: #815738; stroke: #d6ad70; stroke-width: 3; }
-.plan-mat { fill: rgba(166, 180, 180, 0.2); stroke: #8da0a2; stroke-width: 2; stroke-dasharray: 7 5; }
-.plan-glass { stroke: #7adbed; stroke-width: 7; stroke-dasharray: 12 5; }
-.plan-exit-door { stroke: #ff7065; stroke-width: 11; }
-.plan-door { fill: none; stroke: #d9b77e; stroke-width: 3; stroke-dasharray: 5 4; }
-.plan-door-exit { stroke: #ff8a7d; }
-.plan-door-glass { stroke: #81e8f7; }
-.plan-gate { stroke: #69dcff; stroke-width: 12; stroke-dasharray: 15 7; }
-.plan-route { fill: none; stroke: rgba(93, 225, 255, 0.52); stroke-width: 11; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 19 13; }
-.plan-entrance { stroke: #5de1ff; stroke-width: 12; }
-.plan-label { fill: #edf6f3; font: 700 17px Arial, sans-serif; letter-spacing: 1px; text-anchor: middle; dominant-baseline: middle; }
-.plan-note { fill: #d9c7a8; font: 700 12px Arial, sans-serif; letter-spacing: 1px; text-anchor: middle; }
-.plan-route-label { fill: #75dff2; font: 700 10px Arial, sans-serif; letter-spacing: 1px; text-anchor: middle; }
-.plan-table { fill: #b88255; stroke: #f0ce9c; stroke-width: 3; }
-.plan-chair { fill: #6c4b36; stroke: #bf9b72; stroke-width: 2; }
-.plan-chair-back { fill: #4d3427; stroke: #bf9b72; stroke-width: 2; }
-.plan-waiting-chair { fill: #536d78; stroke: #a8d3dc; }
-.plan-plant { fill: #4f976a; stroke: #b8dec4; stroke-width: 2; }
-.plan-fixture { fill: #6b4d38; stroke: #d6ad70; stroke-width: 2; }
-.plan-metal-fixture { fill: #718086; stroke: #c6d2d4; }
-.plan-storage-fixture { fill: #555f62; stroke: #b9c6c8; stroke-width: 2; }
-.plan-shelf-line { stroke: #aeb9ba; stroke-width: 2; }
-.plan-restroom-fixture { fill: #dbe2df; stroke: #91aeb2; }
-.plan-restroom-bowl { fill: #74939a; stroke: #dbe2df; stroke-width: 2; }
-.plan-appliance { fill: #77878a; stroke: #d5e0e0; stroke-width: 2; }
-.plan-display { fill: rgba(157, 220, 230, 0.45); stroke: #b7e7ee; stroke-width: 2; }
-.plan-player { fill: #5de1ff; stroke: #f3ffff; stroke-width: 5; filter: drop-shadow(0 0 8px #5de1ff); }
+.plan-outline { fill: rgba(3, 36, 60, 0.08); stroke: none; }
+.plan-staff, .plan-room, .plan-public { fill: none; stroke: none; }
+.plan-wall { fill: none; stroke: #e5f4ff; stroke-width: 17; stroke-linecap: square; }
+.plan-wall-core { stroke: url(#plan-hatch); stroke-width: 13; }
+.plan-counter, .plan-table { fill: rgba(151, 197, 224, 0.16); stroke: #e5f4ff; stroke-width: 1.8; }
+.plan-mat { fill: rgba(151, 197, 224, 0.06); stroke: #d1e7f6; stroke-width: 1.2; stroke-dasharray: 7 4; }
+.plan-glass { stroke: #e5f4ff; stroke-width: 5; stroke-dasharray: 48 2; }
+.plan-door { fill: none; stroke: #e5f4ff; stroke-width: 1.4; stroke-dasharray: 6 3; }
+.plan-door-leaf { fill: none; stroke: #e5f4ff; stroke-width: 3; }
+.plan-gate { stroke: #b8d9ed; stroke-width: 3; stroke-dasharray: 9 3; }
+.plan-route { fill: none; stroke: #e5f4ff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 11 7; }
+.plan-entrance { stroke: #e5f4ff; stroke-width: 1; }
+.plan-label { fill: #f2f8ff; font: 600 15px Arial, sans-serif; letter-spacing: 1.4px; text-anchor: middle; dominant-baseline: middle; }
+.plan-note, .plan-route-label { fill: #e0f0fc; font: 400 11px Arial, sans-serif; letter-spacing: .8px; text-anchor: middle; }
+.plan-chair, .plan-chair-back, .plan-fixture, .plan-storage-fixture, .plan-appliance, .plan-display { fill: rgba(151, 197, 224, 0.13); stroke: #dceefa; stroke-width: 1.4; }
+.plan-plant { fill: none; stroke: #e5f4ff; stroke-width: 1; }
+.plan-shelf-line { stroke: #dceefa; stroke-width: 1; }
+.plan-restroom-fixture { fill: rgba(151, 197, 224, 0.16); stroke: #e5f4ff; }
+.plan-restroom-bowl { fill: none; stroke: #e5f4ff; stroke-width: 1; }
+.plan-detail { fill: none; stroke: #dceefa; stroke-width: 1; }
+.plan-player { fill: #79e3ff; stroke: #f3ffff; stroke-width: 2; }
+.plan-sheet-border { fill: none; stroke: #95bdd7; stroke-width: .8; }
+.plan-extension { fill: none; stroke: #c0dced; stroke-width: 1; }
+.plan-dimension { fill: none; stroke: #e5f4ff; stroke-width: 1; marker-start: url(#plan-dimension-arrow); marker-end: url(#plan-dimension-arrow); }
+.plan-dimension-text { fill: #eff7ff; font: 400 13px Arial, sans-serif; text-anchor: middle; }
+.plan-overall-dimension { font-size: 17px; }
+.plan-title-block { fill: #eaf5ff; font: 400 11px Arial, sans-serif; letter-spacing: .2px; }
+.plan-title-block .plan-sheet-title { font: 600 28px Georgia, serif; letter-spacing: 1.4px; }
+.plan-block-heading { font-size: 11px; letter-spacing: 1px; }
+.plan-small-print { font-size: 9px; letter-spacing: 1px; }
+.plan-scale { fill: none; stroke: #e5f4ff; stroke-width: 3; }
+.plan-scale-text { font-size: 10px; text-anchor: middle; }
 
 .floorplan-key {
   display: flex;

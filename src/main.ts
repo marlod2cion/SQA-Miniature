@@ -124,8 +124,10 @@ let autoTour: AutoTourState | null = null;
 const savedWalkPosition = firstPerson.getPosition().clone();
 const savedWalkDirection = new THREE.Vector3(0, 0, 1);
 
+// Viewed from the entrance (-Z), positive world X appears on the left.
+// Keep generated furniture and the player aligned with the mirrored SVG shell.
 const planPoint = (x: number, z: number): { x: number; y: number } => ({
-  x: 500 + x * shop.horizontalScale * 90,
+  x: 500 - x * shop.horizontalScale * 90,
   y: 450 - z * shop.depthScale * 90,
 });
 const svgNamespace = 'http://www.w3.org/2000/svg';
@@ -160,6 +162,7 @@ function appendPlanChair(placement: ChairPlacement, waiting = false): void {
     planDepth(CHAIR_SEAT_SIZE),
     waiting ? 'plan-chair plan-waiting-chair' : 'plan-chair',
   );
+  appendPlanRect(seat.x, seat.y, planWidth(CHAIR_SEAT_SIZE) - 5, planDepth(CHAIR_SEAT_SIZE) - 5, 'plan-detail');
 
   const back = planPoint(placement.x + placement.backX * 0.14, placement.z + placement.backZ * 0.14);
   const facesSideWall = placement.backX !== 0;
@@ -176,10 +179,18 @@ function appendPlanChair(placement: ChairPlacement, waiting = false): void {
 DINING_TABLES.forEach(({ x, z }) => {
   const table = planPoint(x, z);
   appendPlanRect(table.x, table.y, planWidth(DINING_TABLE_SIZE.width), planDepth(DINING_TABLE_SIZE.depth), 'plan-table', 4);
+  appendPlanRect(table.x, table.y, planWidth(DINING_TABLE_SIZE.width) - 6, planDepth(DINING_TABLE_SIZE.depth) - 6, 'plan-detail', 3);
+  for (let angle = 0; angle < 360; angle += 45) {
+    const leaf = document.createElementNS(svgNamespace, 'path');
+    leaf.setAttribute('d', 'M 0 0 Q -5 -9 0 -15 Q 5 -9 0 0');
+    leaf.setAttribute('transform', `translate(${table.x} ${table.y}) rotate(${angle})`);
+    leaf.setAttribute('class', 'plan-plant');
+    floorplanTables.append(leaf);
+  }
   const plant = document.createElementNS(svgNamespace, 'circle');
   plant.setAttribute('cx', String(table.x));
   plant.setAttribute('cy', String(table.y));
-  plant.setAttribute('r', '8');
+  plant.setAttribute('r', '3');
   plant.setAttribute('class', 'plan-plant');
   floorplanTables.append(plant);
   appendPlanChair({ x, z: z - DINING_CHAIR_OFFSET, backX: 0, backZ: -1 });
